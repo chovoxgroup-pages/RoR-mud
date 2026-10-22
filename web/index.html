@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Rise of the Runelords MUD</title>
+    <style>
+        :root {
+            --bg-dark: #0d0f12;
+            --panel-bg: #16191e;
+            --border: #2a2f3a;
+            --text-main: #d0d4dc;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'JetBrains Mono', 'Courier New', monospace;
+            height: 100vh;
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            grid-template-rows: 1fr 64px;
+            overflow: hidden;
+        }
+        
+        #terminal-container {
+            grid-column: 1;
+            grid-row: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 16px;
+            overflow-y: auto;
+            border-right: 1px solid var(--border);
+        }
+        .log-entry { margin-bottom: 8px; line-height: 1.45; font-size: 14px; }
+        
+        #sidebar {
+            grid-column: 2;
+            grid-row: 1 / span 2;
+            background: var(--panel-bg);
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .panel-box {
+            border: 1px solid var(--border);
+            padding: 10px;
+            background: #111317;
+            border-radius: 4px;
+        }
+        .panel-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #8892b0;
+            margin-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 4px;
+        }
+
+        /* Gauge CSS */
+        .gauge-row { margin-bottom: 8px; }
+        .gauge-label { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 3px; color: #d0d4dc; }
+        .gauge-track { width: 100%; height: 12px; background: #22262e; border-radius: 2px; overflow: hidden; }
+        .gauge-fill { height: 100%; transition: width 0.2s ease-out; }
+        #hp-bar { background: #c93b3b; width: 100%; }
+        #mp-bar { background: #3b6cc9; width: 100%; }
+        #end-bar { background: #c9963b; width: 100%; }
+        
+        #input-bar {
+            grid-column: 1;
+            grid-row: 2;
+            background: #12151a;
+            border-top: 1px solid var(--border);
+            border-right: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            gap: 12px;
+        }
+        #cmd-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-family: inherit;
+            font-size: 15px;
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+
+<div id="terminal-container"></div>
+
+<div id="input-bar">
+    <span style="color: #95a5a6;">&gt;</span>
+    <input type="text" id="cmd-input" placeholder="Enter command (e.g., look, north, south)..." autocomplete="off" autofocus>
+</div>
+
+<div id="sidebar">
+    <div class="panel-box">
+        <div class="panel-title">Automapper</div>
+        <div id="room-name" style="color:#5ce6cd; font-size: 13px; font-weight:bold;">Loading...</div>
+        <div id="room-exits" style="color:#8892b0; font-size:12px; margin-top:4px;">Exits: </div>
+    </div>
+
+    <!-- The Vitals Dashboard -->
+    <div class="panel-box">
+        <div class="panel-title">Character Vitals</div>
+        <div class="gauge-row">
+            <div class="gauge-label"><span>Health</span><span id="hp-text">-/-</span></div>
+            <div class="gauge-track"><div id="hp-bar" class="gauge-fill"></div></div>
+        </div>
+        <div class="gauge-row">
+            <div class="gauge-label"><span>Spell Points</span><span id="mp-text">-/-</span></div>
+            <div class="gauge-track"><div id="mp-bar" class="gauge-fill"></div></div>
+        </div>
+        <div class="gauge-row">
+            <div class="gauge-label"><span>Endurance</span><span id="end-text">-/-</span></div>
+            <div class="gauge-track"><div id="end-bar" class="gauge-fill"></div></div>
+        </div>
+    </div>
+    
+    <div class="panel-box">
+        <div class="panel-title">Quick Commands</div>
+        <div style="font-size:12px; color:#8892b0; line-height:1.6;">
+            <b>look (l)</b> Inspect current room<br>
+            <b>north (n)</b> Move North<br>
+            <b>south (s)</b> Move South<br>
+            <b>east (e)</b> Move East<br>
+            <b>west (w)</b> Move West<br>
+        </div>
+    </div>
+</div>
+
+<script>
+    const term = document.getElementById('terminal-container');
+    const input = document.getElementById('cmd-input');
+    const ws = new WebSocket(`ws://${location.host}/ws`);
+    
+    const history = [];
+    let histIdx = -1;
+
+    ws.onmessage = (event) => {
+        const packet = JSON.parse(event.data);
+        
+        if (packet.type === 'text') {
+            const div = document.createElement('div');
+            div.className = 'log-entry';
+            div.innerHTML = packet.payload;
+            term.appendChild(div);
+            term.scrollTop = term.scrollHeight;
+        } 
+        else if (packet.type === 'gmcp' && packet.module === 'Room.Info') {
+            document.getElementById('room-name').textContent = packet.payload.name;
+            document.getElementById('room-exits').textContent = 'Exits: ' + packet.payload.exits.join(', ');
+        }
+        // Catch the GMCP Vitals packet and animate the bars
+        else if (packet.type === 'gmcp' && packet.module === 'Char.Vitals') {
+            const d = packet.payload;
+            
+            document.getElementById('hp-text').textContent = `${d.hp}/${d.max_hp}`;
+            document.getElementById('hp-bar').style.width = `${(d.hp / d.max_hp) * 100}%`;
+            
+            document.getElementById('mp-text').textContent = `${d.mp}/${d.max_mp}`;
+            document.getElementById('mp-bar').style.width = `${(d.mp / d.max_mp) * 100}%`;
+            
+            document.getElementById('end-text').textContent = `${d.end}/${d.max_end}`;
+            document.getElementById('end-bar').style.width = `${(d.end / d.max_end) * 100}%`;
+        }
+    };
+
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && input.value.trim() !== '') {
+            const cmd = input.value.trim();
+            ws.send(JSON.stringify({ cmd }));
+            
+            history.unshift(cmd);
+            histIdx = -1;
+            input.value = '';
+        } else if (e.key === 'ArrowUp') {
+            if (histIdx < history.length - 1) {
+                histIdx++;
+                input.value = history[histIdx];
+            }
+            e.preventDefault();
+        } else if (e.key === 'ArrowDown') {
+            if (histIdx > 0) {
+                histIdx--;
+                input.value = history[histIdx];
+            } else {
+                histIdx = -1;
+                input.value = '';
+            }
+            e.preventDefault();
+        }
+    });
+</script>
+
+</body>
+</html>

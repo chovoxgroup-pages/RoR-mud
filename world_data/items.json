@@ -1,0 +1,9 @@
+{
+  "potion_cure_light": {
+    "id": "potion_cure_light",
+    "name": "Potion of Cure Light Wounds",
+    "description": "This potion restores 1d8+3 hit points.",
+    "weight": 0.1,
+    "value": 50
+  }
+}

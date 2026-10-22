@@ -1,0 +1,88 @@
+{
+  "goblin_warrior": {
+    "id": "goblin_warrior",
+    "name": "Goblin",
+    "description": "This creature stands barely three feet tall, its scrawny, humanoid\nbody dwarfed by its wide, ungainly head.",
+    "hp": 6,
+    "max_hp": 6,
+    "mana": 0,
+    "max_mana": 0,
+    "endurance": 0,
+    "MaxEndurance": 0,
+    "ac": {
+      "total": 16,
+      "touch": 13,
+      "flat_footed": 14
+    },
+    "speed": 30,
+    "senses": [
+      "darkvision 60 ft.",
+      "Perception -1"
+    ],
+    "melee_attacks": [
+      "+2 short sword (1d4/19-20)"
+    ],
+    "ranged_attacks": [
+      "+4 short bow (1d4/x3)"
+    ],
+    "saves": {
+      "fortitude": 3,
+      "reflex": 2,
+      "will": -1
+    },
+    "defenses": [],
+    "abilities": {
+      "str": 11,
+      "dex": 15,
+      "con": 12,
+      "int": 10,
+      "wis": 9,
+      "cha": 6
+    },
+    "special_qualities": [],
+    "special_attacks": [],
+    "inventory": {}
+  },
+  "goblin_warrior_02": {
+    "id": "goblin_warrior_02",
+    "name": "goblin_pyro",
+    "description": "This creature stands barely three feet tall, its scrawny, humanoid body dwarfed by its wide, ungainly head. It is armed with twin, flaming torches, a frenzied glee in its evil bulbous eyes.",
+    "hp": 6,
+    "max_hp": 6,
+    "mana": 0,
+    "max_mana": 0,
+    "endurance": 0,
+    "MaxEndurance": 0,
+    "ac": {
+      "total": 16,
+      "touch": 13,
+      "flat_footed": 14
+    },
+    "speed": 30,
+    "senses": [
+      "darkvision 60 ft.",
+      "Perception -1"
+    ],
+    "melee_attacks": [
+      "+2 torch (1d4 fire)"
+    ],
+    "ranged_attacks": [],
+    "saves": {
+      "fortitude": 3,
+      "reflex": 2,
+      "will": -1
+    },
+    "defenses": [],
+    "abilities": {
+      "str": 11,
+      "dex": 15,
+      "con": 12,
+      "int": 10,
+      "wis": 9,
+      "cha": 6
+    },
+    "special_qualities": [],
+    "special_attacks": [],
+    "inventory": {}
+  }
+}

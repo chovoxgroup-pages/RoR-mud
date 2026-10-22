@@ -1,0 +1,159 @@
+{
+  "sandpoint_square_01": {
+    "id": "sandpoint_square_01",
+    "name": "Sandpoint Town Square NW",
+    "descriptions": {
+      "default": "Two shops are here. This is the Northwest corner of the town of Sandpoint's Town Square.",
+      "goblin_raid": "Chaos reigns, panicked festival-goers careen about to and fro. One merchant stall of a pair set in front of their respective buildings has been upended here amidst the fracas.",
+      "swallowtail_festival": "The Swallowtail Festival is in full swing. Crowds meander to and fro. There are two merchant stalls set in front of their respective buildings here, hoping to attract passers by."
+    },
+    "exits": {
+      "e": "sandpoint_square_02",
+      "s": "sandpoint_square_04",
+      "se": "sandpoint_square_05"
+    },
+    "npcs": [],
+    "items": {}
+  },
+  "sandpoint_square_02": {
+    "id": "sandpoint_square_02",
+    "name": "Sandpoint Town Square N",
+    "descriptions": {
+      "default": "There are tables set out for folks to eat here.",
+      "goblin_raid": "Chaos reigns, panicked festival-goers careen about in full panic. A table has been knocked over, food spilling onto the ground.",
+      "swallowtail_festival": "The Swallowtail Festival is in full swing. Festival-goers enjoy food nearby."
+    },
+    "exits": {
+      "e": "sandpoint_square_03",
+      "s": "sandpoint_square_05",
+      "se": "sandpoint_square_06",
+      "sw": "sandpoint_square_04",
+      "w": "sandpoint_square_01"
+    },
+    "npcs": [],
+    "items": {}
+  },
+  "sandpoint_square_03": {
+    "id": "sandpoint_square_03",
+    "name": "Sandpoint Town Square NE",
+    "descriptions": {
+      "default": "There is an exit into the town streets here, and the low wall of the Cathedral grounds to the east.",
+      "goblin_raid": "Chaos reigns, panicked festival-goers careen about in a panic! A mob is bottle-necking at the nearby egress into the town proper.",
+      "swallowtail_festival": "The Swallowtail Festival is in full swing, festival-goers come and go through the entrance/exit in this area."
+    },
+    "exits": {
+      "s": "sandpoint_square_06",
+      "sw": "sandpoint_square_05",
+      "w": "sandpoint_square_02"
+    },
+    "npcs": [],
+    "items": {}
+  },
+  "sandpoint_square_04": {
+    "id": "sandpoint_square_04",
+    "name": "Sandpoint Town Square W",
+    "descriptions": {
+      "default": "The western edge of the Town Square. There are merchant stalls setup here.",
+      "goblin_raid": "Chaos reigns! Panicked festival-goers careen and clamber over and through the crowded open-air market space in this area.",
+      "swallowtail_festival": "The Swallowtail Festival is in full swing, and there are more even more merchant stalls crowding the area, festival-goers eagerly squeeze between the stalls perusing the wares."
+    },
+    "exits": {
+      "e": "sandpoint_square_05",
+      "n": "sandpoint_square_01",
+      "ne": "sandpoint_square_02",
+      "s": "sandpoint_square_07",
+      "se": "sandpoint_square_08"
+    },
+    "npcs": [],
+    "items": {}
+  },
+  "sandpoint_square_05": {
+    "id": "sandpoint_square_05",
+    "name": "Sandpoint Town Square Center",
+    "descriptions": {
+      "default": "The central square is here, a large wide open space for holding events and gatherings.",
+      "goblin_raid": "Chaos reigns! Goblins are underfoot, and the crowd is in full panic mode.",
+      "swallowtail_festival": "The Swallowtail Festival is in full swing. The Grand Stage has been constructed here, dignitaries and entertainers come and go."
+    },
+    "exits": {
+      "e": "sandpoint_square_06",
+      "n": "sandpoint_square_02",
+      "ne": "sandpoint_square_03",
+      "nw": "sandpoint_square_01",
+      "s": "sandpoint_square_08",
+      "se": "sandpoint_square_09",
+      "sw": "sandpoint_square_07",
+      "w": "sandpoint_square_04"
+    },
+    "npcs": [],
+    "items": {}
+  },
+  "sandpoint_square_06": {
+    "id": "sandpoint_square_06",
+    "name": "Sandpoint Town Square E",
+    "descriptions": {
+      "default": "The Cathedral steps are here. It is a majestic entrance, stained glass and marble with wooden doors, the spires towering above.",
+      "goblin_raid": "Chaos reigns! Church staff hurriedly wave panicked festival-goers to safety before slamming the doors shut against the goblin hordes.",
+      "swallowtail_festival": "The Swallowtail Festival is in full swing, passers-by admire the newly completed Cathedral."
+    },
+    "exits": {
+      "n": "sandpoint_square_03",
+      "nw": "sandpoint_square_02",
+      "s": "sandpoint_square_09",
+      "sw": "sandpoint_square_08",
+      "w": "sandpoint_square_05"
+    },
+    "npcs": [],
+    "items": {}
+  },
+  "sandpoint_square_07": {
+    "id": "sandpoint_square_07",
+    "name": "Sandpoint Town Square SW",
+    "descriptions": {
+      "default": "There is an entrance/exit to the town square here.",
+      "goblin_raid": "Chaos reigns! A panicked mob of festival-goers bottlenecks at the corner of the square here.",
+      "swallowtail_festival": "The Swallowtail Festival is in full swing! Festival-goers come and go from the rest of the town."
+    },
+    "exits": {
+      "e": "sandpoint_square_08",
+      "n": "sandpoint_square_04",
+      "ne": "sandpoint_square_05"
+    },
+    "npcs": [],
+    "items": {}
+  },
+  "sandpoint_square_08": {
+    "id": "sandpoint_square_08",
+    "name": "Sandpoint Town Square S",
+    "descriptions": {
+      "default": "There are tables set out for folks to eat here.",
+      "goblin_raid": "Chaos reigns, panicked festival-goers careen about in full panic. A table has been knocked over, food spilling onto the ground.",
+      "swallowtail_festival": "The Swallowtail Festival is in full swing. Festival-goers enjoy food nearby."
+    },
+    "exits": {
+      "e": "sandpoint_square_09",
+      "n": "sandpoint_square_05",
+      "ne": "sandpoint_square_06",
+      "nw": "sandpoint_square_04",
+      "w": "sandpoint_square_07"
+    },
+    "npcs": [],
+    "items": {}
+  },
+  "sandpoint_square_09": {
+    "id": "sandpoint_square_09",
+    "name": "Sandpoint Town Square SE",
+    "descriptions": {
+      "default": "There is an exit into the town here, the low wall of the Cathedral grounds lies to the east.",
+      "goblin_raid": "Chaos reigns! Panicked festival-goers mob about the exit to the town in this area.",
+      "swallowtail_festival": "The Swallowtail festival is in full swing. Festival-goers come and go from the entrance nearby."
+    },
+    "exits": {
+      "n": "sandpoint_square_06",
+      "nw": "sandpoint_square_05",
+      "w": "sandpoint_square_08"
+    },
+    "npcs": [],
+    "items": {}
+  }
+}

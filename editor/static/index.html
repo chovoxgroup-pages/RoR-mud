@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MUD Campaign Editor</title>
+    <style>
+        body { font-family: system-ui, sans-serif; background: #1e1e1e; color: #d4d4d4; padding: 2rem; margin: 0; }
+        .container { max-width: 800px; margin: 0 auto; background: #252526; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        h1 { color: #569cd6; margin-top: 0; }
+        
+        /* Tab Navigation */
+        .tabs { display: flex; gap: 10px; margin-bottom: 1.5rem; border-bottom: 2px solid #3c3c3c; padding-bottom: 10px; }
+        .tab-btn { background: none; color: #d4d4d4; border: none; font-size: 1.1rem; cursor: pointer; padding: 0.5rem 1rem; border-radius: 4px; }
+        .tab-btn.active { background: #0e639c; color: white; }
+        .tab-btn:hover:not(.active) { background: #3c3c3c; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        label { display: block; margin-top: 1rem; font-weight: bold; color: #9cdcfe; font-size: 0.9rem; }
+        input, textarea { width: 100%; padding: 0.5rem; margin-top: 0.3rem; background: #3c3c3c; border: 1px solid #555; color: #fff; border-radius: 4px; box-sizing: border-box; }
+        textarea { height: 80px; resize: vertical; }
+        
+        button[type="submit"] { margin-top: 1.5rem; width: 100%; padding: 0.75rem; background: #0e639c; color: white; border: none; border-radius: 4px; font-size: 1rem; cursor: pointer; }
+        button[type="submit"]:hover { background: #1177bb; }
+        
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+        .grid-6 { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
+        
+        .exit-row, .state-row { display: flex; gap: 10px; margin-top: 0.5rem; }
+        .state-row { flex-direction: column; background: #2d2d30; padding: 10px; border-radius: 4px; border-left: 3px solid #c586c0; }
+        .state-header { display: flex; gap: 10px; align-items: center; }
+        .btn-small { background: #4CAF50; padding: 0.5rem 1rem; margin-top: 0.5rem; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        .btn-remove { background: #f44336; padding: 0.5rem; margin-top: 0; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        
+        .status { margin-top: 1rem; text-align: center; font-weight: bold; }
+        .success { color: #4CAF50; }
+        .error { color: #f44336; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="tabs">
+        <button class="tab-btn active" onclick="openTab(event, 'roomTab')">Room Builder</button>
+        <button class="tab-btn" onclick="openTab(event, 'itemTab')">Item Compendium</button>
+        <button class="tab-btn" onclick="openTab(event, 'monsterTab')">Monster Compendium</button>
+    </div>
+
+    <!-- ROOM BUILDER TAB -->
+    <div id="roomTab" class="tab-content active">
+        <h1>Create a Room</h1>
+        <form id="roomForm">
+            <div class="grid-2">
+                <div><label>Room ID</label><input type="text" id="roomId" required></div>
+                <div><label>Room Name</label><input type="text" id="roomName" required></div>
+            </div>
+            <label>Default Room Description</label><textarea id="readAloud" required></textarea>
+            <label>World State Events</label>
+            <div id="statesContainer"></div>
+            <button type="button" class="btn-small" id="addStateBtn" style="background: #c586c0;">+ Add World State</button>
+            <label>Exits</label>
+            <div id="exitsContainer"></div>
+            <button type="button" class="btn-small" id="addExitBtn">+ Add Exit</button>
+            <button type="submit">Save Room</button>
+            <div id="roomStatus" class="status"></div>
+        </form>
+    </div>
+
+    <!-- ITEM BUILDER TAB -->
+    <div id="itemTab" class="tab-content">
+        <h1>Create an Item</h1>
+        <form id="itemForm">
+            <div class="grid-2">
+                <div><label>Item ID (e.g., potion_cure_light)</label><input type="text" id="itemId" required></div>
+                <div><label>Item Name</label><input type="text" id="itemName" required></div>
+            </div>
+            <label>Description</label><textarea id="itemDesc" required></textarea>
+            
+            <div class="grid-2">
+                <div><label>Weight (lbs)</label><input type="number" id="itemWeight" step="0.1" value="0" required></div>
+                <div><label>Value (gp)</label><input type="number" id="itemValue" value="0" required></div>
+            </div>
+
+            <button type="submit">Save Item</button>
+            <div id="itemStatus" class="status"></div>
+        </form>
+    </div>
+
+    <!-- MONSTER BUILDER TAB -->
+    <div id="monsterTab" class="tab-content">
+        <h1>Create a Monster</h1>
+        <form id="monsterForm">
+            <div class="grid-2">
+                <div><label>Monster ID (e.g., goblin_warrior_01)</label><input type="text" id="monId" required></div>
+                <div><label>Name</label><input type="text" id="monName" required></div>
+            </div>
+            <label>Description</label><textarea id="monDesc" required></textarea>
+            
+            <div class="grid-2">
+                <div><label>HP</label><input type="number" id="monHp" value="10" required></div>
+                <div><label>Speed (ft)</label><input type="number" id="monSpeed" value="30" required></div>
+            </div>
+
+            <label style="color: #d7ba7d; border-bottom: 1px solid #555; padding-bottom: 5px; margin-top: 1.5rem;">Armor Class</label>
+            <div class="grid-3">
+                <div><label>Total AC</label><input type="number" id="monAcTotal" value="10" required></div>
+                <div><label>Touch</label><input type="number" id="monAcTouch" value="10" required></div>
+                <div><label>Flat-Footed</label><input type="number" id="monAcFlat" value="10" required></div>
+            </div>
+
+            <label style="color: #d7ba7d; border-bottom: 1px solid #555; padding-bottom: 5px; margin-top: 1.5rem;">Ability Scores</label>
+            <div class="grid-6">
+                <div><label>STR</label><input type="number" id="monStr" value="10"></div>
+                <div><label>DEX</label><input type="number" id="monDex" value="10"></div>
+                <div><label>CON</label><input type="number" id="monCon" value="10"></div>
+                <div><label>INT</label><input type="number" id="monInt" value="10"></div>
+                <div><label>WIS</label><input type="number" id="monWis" value="10"></div>
+                <div><label>CHA</label><input type="number" id="monCha" value="10"></div>
+            </div>
+
+            <label style="color: #d7ba7d; border-bottom: 1px solid #555; padding-bottom: 5px; margin-top: 1.5rem;">Saving Throws</label>
+            <div class="grid-3">
+                <div><label>Fortitude</label><input type="number" id="monFort" value="0"></div>
+                <div><label>Reflex</label><input type="number" id="monRef" value="0"></div>
+                <div><label>Will</label><input type="number" id="monWill" value="0"></div>
+            </div>
+
+            <label style="color: #d7ba7d; border-bottom: 1px solid #555; padding-bottom: 5px; margin-top: 1.5rem;">Combat & Traits (Comma separated)</label>
+            <div class="grid-2">
+                <div><label>Melee Attacks</label><input type="text" id="monMelee" placeholder="+2 dogslicer (1d4)"></div>
+                <div><label>Ranged Attacks</label><input type="text" id="monRanged" placeholder="+4 shortbow (1d4)"></div>
+            </div>
+            <div class="grid-2">
+                <div><label>Senses</label><input type="text" id="monSenses" placeholder="darkvision 60 ft, scent"></div>
+                <div><label>Defenses</label><input type="text" id="monDefenses" placeholder="immune fire, resist cold 5"></div>
+            </div>
+            <div class="grid-2">
+                <div><label>Special Qualities</label><input type="text" id="monSq" placeholder="trapfinding"></div>
+                <div><label>Special Attacks</label><input type="text" id="monSa" placeholder="sneak attack +1d6"></div>
+            </div>
+
+            <button type="submit">Save Monster</button>
+            <div id="monsterStatus" class="status"></div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openTab(evt, tabName) {
+        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.getElementById(tabName).classList.add('active');
+        evt.currentTarget.classList.add('active');
+    }
+
+    // Helper to parse comma-separated strings into arrays safely
+    function parseArray(inputStr) {
+        if (!inputStr.trim()) return [];
+        return inputStr.split(',').map(s => s.trim()).filter(s => s.length > 0);
+    }
+
+    document.getElementById('addExitBtn').addEventListener('click', () => {
+        const div = document.createElement('div');
+        div.className = 'exit-row';
+        div.innerHTML = `<input type="text" placeholder="Dir (e.g. n)" class="exit-dir"><input type="text" placeholder="Target ID" class="exit-id"><button type="button" class="btn-remove" onclick="this.parentElement.remove()">X</button>`;
+        document.getElementById('exitsContainer').appendChild(div);
+    });
+
+    document.getElementById('addStateBtn').addEventListener('click', () => {
+        const div = document.createElement('div');
+        div.className = 'state-row';
+        div.innerHTML = `<div class="state-header"><input type="text" placeholder="State (e.g. goblin_raid)" class="state-name"><button type="button" class="btn-remove" onclick="this.parentElement.parentElement.remove()">X</button></div><textarea placeholder="Event text..." class="state-text"></textarea>`;
+        document.getElementById('statesContainer').appendChild(div);
+    });
+
+    // Save Room
+    document.getElementById('roomForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const status = document.getElementById('roomStatus');
+        status.textContent = 'Saving...'; status.className = 'status';
+
+        const descriptions = { "default": document.getElementById('readAloud').value.trim() };
+        document.querySelectorAll('.state-row').forEach(row => {
+            const n = row.querySelector('.state-name').value.trim().toLowerCase();
+            const t = row.querySelector('.state-text').value.trim();
+            if (n && t) descriptions[n] = t;
+        });
+
+        const exits = {};
+        document.querySelectorAll('.exit-row').forEach(row => {
+            const d = row.querySelector('.exit-dir').value.trim().toLowerCase();
+            const id = row.querySelector('.exit-id').value.trim();
+            if (d && id) exits[d] = id;
+        });
+
+        const roomData = {
+            id: document.getElementById('roomId').value.trim(),
+            name: document.getElementById('roomName').value.trim(),
+            descriptions: descriptions, exits: exits, npcs: [], items: {} 
+        };
+
+        try {
+            const res = await fetch('/api/save_room', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(roomData) });
+            if (res.ok) {
+                status.textContent = await res.text(); status.className = 'status success';
+                document.getElementById('roomId').value = ''; document.getElementById('roomName').value = ''; document.getElementById('readAloud').value = '';
+                document.getElementById('statesContainer').innerHTML = ''; document.getElementById('exitsContainer').innerHTML = '';
+            } else throw new Error(await res.text());
+        } catch (err) { status.textContent = 'Error: ' + err.message; status.className = 'status error'; }
+    });
+
+    // Save Item
+    document.getElementById('itemForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const status = document.getElementById('itemStatus');
+        status.textContent = 'Saving...'; status.className = 'status';
+
+        const itemData = {
+            id: document.getElementById('itemId').value.trim(),
+            name: document.getElementById('itemName').value.trim(),
+            description: document.getElementById('itemDesc').value.trim(),
+            weight: parseFloat(document.getElementById('itemWeight').value),
+            value: parseInt(document.getElementById('itemValue').value, 10)
+        };
+
+        try {
+            const res = await fetch('/api/save_item', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(itemData) });
+            if (res.ok) {
+                status.textContent = await res.text(); status.className = 'status success';
+                document.getElementById('itemForm').reset();
+            } else throw new Error(await res.text());
+        } catch (err) { status.textContent = 'Error: ' + err.message; status.className = 'status error'; }
+    });
+
+    // Save Monster
+    document.getElementById('monsterForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const status = document.getElementById('monsterStatus');
+        status.textContent = 'Saving...'; status.className = 'status';
+
+        const hp = parseInt(document.getElementById('monHp').value, 10);
+        const monsterData = {
+            id: document.getElementById('monId').value.trim(),
+            name: document.getElementById('monName').value.trim(),
+            description: document.getElementById('monDesc').value.trim(),
+            hp: hp,
+            max_hp: hp, // Automatically sync Max HP on creation
+            ac: {
+                total: parseInt(document.getElementById('monAcTotal').value, 10),
+                touch: parseInt(document.getElementById('monAcTouch').value, 10),
+                flat_footed: parseInt(document.getElementById('monAcFlat').value, 10)
+            },
+            speed: parseInt(document.getElementById('monSpeed').value, 10),
+            abilities: {
+                str: parseInt(document.getElementById('monStr').value, 10),
+                dex: parseInt(document.getElementById('monDex').value, 10),
+                con: parseInt(document.getElementById('monCon').value, 10),
+                int: parseInt(document.getElementById('monInt').value, 10),
+                wis: parseInt(document.getElementById('monWis').value, 10),
+                cha: parseInt(document.getElementById('monCha').value, 10)
+            },
+            saves: {
+                fortitude: parseInt(document.getElementById('monFort').value, 10),
+                reflex: parseInt(document.getElementById('monRef').value, 10),
+                will: parseInt(document.getElementById('monWill').value, 10)
+            },
+            melee_attacks: parseArray(document.getElementById('monMelee').value),
+            ranged_attacks: parseArray(document.getElementById('monRanged').value),
+            senses: parseArray(document.getElementById('monSenses').value),
+            defenses: parseArray(document.getElementById('monDefenses').value),
+            special_qualities: parseArray(document.getElementById('monSq').value),
+            special_attacks: parseArray(document.getElementById('monSa').value),
+            inventory: {} // Maps item IDs to quantities later
+        };
+
+        try {
+            const res = await fetch('/api/save_monster', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(monsterData) });
+            if (res.ok) {
+                status.textContent = await res.text(); status.className = 'status success';
+                document.getElementById('monsterForm').reset();
+            } else throw new Error(await res.text());
+        } catch (err) { status.textContent = 'Error: ' + err.message; status.className = 'status error'; }
+    });
+</script>
+
+</body>
+</html>
